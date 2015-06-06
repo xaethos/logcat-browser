@@ -1,21 +1,17 @@
 from twisted.internet import reactor, protocol
-#from autobahn import websocket
-from autobahn.twisted.websocket import WebSocketServerFactory, \
-                               WebSocketServerProtocol, \
-                               listenWS
+from autobahn.twisted.websocket import WebSocketServerFactory, WebSocketServerProtocol, listenWS
 from twisted.python.log import startLogging, msg
 import sys
+import os
+
 startLogging(sys.stdout)
 
 # Examples:
 # runner.py /bin/sh -c "tail -f /var/log/nginx/access.log | grep -v secret_admin_page" --line-buffered | awk '{\$1=\"\"; print}'"
 # runner.py tail tail -F /var/log/nginx/access.log
 
-COMMAND_NAME = sys.argv[1]
-COMMAND_ARGS = sys.argv[1:]
-LOCAL_ONLY = False
-DEBUG = True
-
+ADB_PATH = os.environ['ANDROID_HOME'] + '/platform-tools/adb'
+LOGCAT_ARGS = [ADB_PATH, 'lolcat', '-v', 'threadtime']
 
 class ProcessProtocol(protocol.ProcessProtocol):
     """ I handle a child process launched via reactor.spawnProcess.
@@ -25,7 +21,7 @@ class ProcessProtocol(protocol.ProcessProtocol):
     def __init__(self, websocket_factory):
         self.ws = websocket_factory
         self.buffer = []
-        
+
     def outReceived(self, message):
         self.ws.broadcast(message)
         self.buffer.append(message)
@@ -34,8 +30,6 @@ class ProcessProtocol(protocol.ProcessProtocol):
     def errReceived(self, data):
         print("Error: %s" % data)
 
-
-# http://autobahn.ws/python
 class WebSocketProcessOutputterThing(WebSocketServerProtocol):
     """ I handle a single connected client. We don't need to do much here, simply call the register and un-register
     functions when needed.
@@ -50,18 +44,17 @@ class WebSocketProcessOutputterThing(WebSocketServerProtocol):
         #super(WebSocketProcessOutputterThing, self).connectionLost(self, reason)
         self.factory.unregister(self)
 
-
 class WebSocketProcessOutputterThingFactory(WebSocketServerFactory):
     """ I maintain a list of connected clients and provide a method for pushing a single message to all of them.
     """
     protocol = WebSocketProcessOutputterThing
-        
+
     def __init__(self, *args, **kwargs):
         WebSocketServerFactory.__init__(self, *args, **kwargs)
         #super(WebSocketProcessOutputterThingFactory, self).__init__(self, *args, **kwargs)
         self.clients = []
         self.process = ProcessProtocol(self)
-        reactor.spawnProcess(self.process,COMMAND_NAME, COMMAND_ARGS, {}, usePTY=True)
+        reactor.spawnProcess(self.process,ADB_PATH, LOGCAT_ARGS, {}, usePTY=True)
 
     def register(self, client):
         msg("Registered client %s" % client)
@@ -79,7 +72,7 @@ class WebSocketProcessOutputterThingFactory(WebSocketServerFactory):
 
 
 if __name__ == "__main__":
-    print("Running process %s with args %s" % (COMMAND_NAME, COMMAND_ARGS))
-    factory = WebSocketProcessOutputterThingFactory("ws://%s:9000" % ("localhost" if LOCAL_ONLY else "0.0.0.0"), debug=False)
+    print("Running process %s with args %s" % (ADB_PATH, LOGCAT_ARGS))
+    factory = WebSocketProcessOutputterThingFactory("ws://%s:9000" % ("localhost"), debug=False)
     listenWS(factory)
     reactor.run()
