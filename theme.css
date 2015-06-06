@@ -1,0 +1,47 @@
+div.log {
+    border-bottom: #DDD 1px solid;
+    width: 3000px;
+}
+
+div.raw {
+    border-left: red 4px solid;
+}
+
+div.warn {
+    background-color: lightyellow;
+}
+
+div.error {
+    background-color: maroon;
+    color: lightgray;
+}
+
+div.info {
+    background-color: lightblue;
+}
+
+div.verbose {
+    color: darkgray;
+}
+
+.log span {
+    display: inline-block;
+    height: 15px;
+    margin-right: 4px;
+    margin-left: 4px;
+    overflow: hidden;
+}
+
+span.pid, span.tid {
+    width: 5ch;
+    text-align: right;
+}
+
+span.tag {
+    width: 10ch;
+}
+
+span.ts {
+    display: none;
+}
+
