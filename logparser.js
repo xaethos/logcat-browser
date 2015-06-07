@@ -1,6 +1,6 @@
 // Log lines look like this
 // 06-04 09:00:16.261  1409  1409 D OpenGLRenderer: TextureCache::get:
-var logPattern = /(.{18})\s*(\S+)\s*(\S+) (.) (\S+)\s*: (.*)/;
+var logPattern = /(.{18})\s*(\S+)\s*(\S+) (.) (\S*)\s*: (.*)/;
 var tsPattern = /(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2}).(\d{3})/;
 var outputNode;
 
