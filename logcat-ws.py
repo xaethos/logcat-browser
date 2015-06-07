@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from twisted.internet import reactor, protocol
 from autobahn.twisted.websocket import WebSocketServerFactory, WebSocketServerProtocol, listenWS
 from twisted.python.log import startLogging, msg
