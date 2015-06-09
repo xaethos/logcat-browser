@@ -2,12 +2,13 @@
 <html>
   <head>
     <title>logcat</title>
-    <link rel="stylesheet" type="text/css" href="theme.css">
-    <script src="laconic.js"></script>
-    <script src="logparser.js"></script>
+    <link rel="stylesheet" type="text/css" href="assets/theme.css">
+    <script data-main="assets/main" src="assets/lib/require.js"></script>
   </head>
   <body>
-    <input type="file" id="logfile" name="logfile" />
+    <form action="">
+      <input type="file" id="logfile" name="logfile" />
+    </form>
     <pre id="logcat"></pre>
   </body>
 </html>

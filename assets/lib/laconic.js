@@ -1,3 +1,5 @@
+define(function(require, exports, module) {
+
 // Laconic simplifies the generation of DOM content.
 (function(context) {
 
@@ -193,3 +195,5 @@
     context.$ = dollar;
   }
 }(this));
+
+});
