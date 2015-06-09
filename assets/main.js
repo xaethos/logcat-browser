@@ -8,7 +8,10 @@ function( LogCat,    WebSocketSource,     FileSource) {
     var outputNode = document.getElementById('logcat');
     outputNode.innerHTML = '';
 
-    window.logcat = new LogCat(new FileSource(files[0]),  outputNode)
+    var fileSource = new FileSource(files[0]);
+    window.logcat = new LogCat(fileSource,  outputNode);
+    window.logcat.autoScroll = false;
+    fileSource.read();
   }
 
   window.logcat = new LogCat(
