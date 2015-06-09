@@ -17,7 +17,7 @@ LOGCAT_ARGS = [ADB_PATH, 'lolcat', '-v', 'threadtime']
 
 class ProcessProtocol(protocol.ProcessProtocol):
     """ I handle a child process launched via reactor.spawnProcess.
-    I just buffer the output into a list and call WebSocketProcessOutputterThingFactory.broadcast when
+    I just buffer the output into a list and call WebSocketLogServerFactory.broadcast when
     any new output is read
     """
     def __init__(self, websocket_factory):
@@ -32,9 +32,10 @@ class ProcessProtocol(protocol.ProcessProtocol):
     def errReceived(self, data):
         print("Error: %s" % data)
 
-class WebSocketProcessOutputterThing(WebSocketServerProtocol):
-    """ I handle a single connected client. We don't need to do much here, simply call the register and un-register
-    functions when needed.
+class WebSocketLogServerProtocol(WebSocketServerProtocol):
+    """
+    Handles a single connected client.
+    We don't need to do much here, simply call the register and un-register functions when needed.
     """
     def onOpen(self):
         self.factory.register(self)
@@ -43,17 +44,18 @@ class WebSocketProcessOutputterThing(WebSocketServerProtocol):
 
     def connectionLost(self, reason):
         WebSocketServerProtocol.connectionLost(self, reason)
-        #super(WebSocketProcessOutputterThing, self).connectionLost(self, reason)
+        #super(WebSocketLogServerProtocol, self).connectionLost(self, reason)
         self.factory.unregister(self)
 
-class WebSocketProcessOutputterThingFactory(WebSocketServerFactory):
-    """ I maintain a list of connected clients and provide a method for pushing a single message to all of them.
+class WebSocketLogServerFactory(WebSocketServerFactory):
     """
-    protocol = WebSocketProcessOutputterThing
+    Maintain a list of connected clients and provide a method for pushing a single message to all of them.
+    """
+    protocol = WebSocketLogServerProtocol
 
     def __init__(self, *args, **kwargs):
         WebSocketServerFactory.__init__(self, *args, **kwargs)
-        #super(WebSocketProcessOutputterThingFactory, self).__init__(self, *args, **kwargs)
+        #super(WebSocketLogServerFactory, self).__init__(self, *args, **kwargs)
         self.clients = []
         self.process = ProcessProtocol(self)
         reactor.spawnProcess(self.process,ADB_PATH, LOGCAT_ARGS, {}, usePTY=True)
@@ -75,6 +77,6 @@ class WebSocketProcessOutputterThingFactory(WebSocketServerFactory):
 
 if __name__ == "__main__":
     print("Running process %s with args %s" % (ADB_PATH, LOGCAT_ARGS))
-    factory = WebSocketProcessOutputterThingFactory("ws://%s:9000" % ("localhost"), debug=False)
+    factory = WebSocketLogServerFactory("ws://%s:9000" % ("localhost"), debug=False)
     listenWS(factory)
     reactor.run()
