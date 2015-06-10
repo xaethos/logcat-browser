@@ -62,7 +62,7 @@ define(['lib/laconic'], function(el) {
         );
     };
 
-    source.ondata = function(line) {
+    source.setListener(function(line) {
       if (!line) return;
 
       var log = self.parseLine(line);
@@ -74,7 +74,7 @@ define(['lib/laconic'], function(el) {
       }
       dom.appendTo(outputNode);
       if (self.autoScroll) dom.scrollIntoView(false);
-    };
+    });
   };
   // Log lines look like this
   // 06-04 09:00:16.261  1409  1409 D OpenGLRenderer: TextureCache::get:

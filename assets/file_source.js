@@ -1,4 +1,4 @@
-define(['log_source', 'line_builder'], function(LogSource, LineBuilder) {
+define(['log_source'], function(LogSource) {
 
   function FileSource(file) {
     var self = this;
@@ -7,14 +7,9 @@ define(['log_source', 'line_builder'], function(LogSource, LineBuilder) {
     var fileLength = file.size;
     var readPos = 0;
 
-    var lineBuilder = new LineBuilder();
-    lineBuilder.online = function(line) {
-      self.ondata(line);
-    };
-
     var reader = new FileReader();
     reader.onload = function () {
-      lineBuilder.append(reader.result);
+      self.ondata(reader.result);
       read();
     }
     reader.onerror = function () {
@@ -31,13 +26,13 @@ define(['log_source', 'line_builder'], function(LogSource, LineBuilder) {
         readPos += bufferSize;
         reader.readAsArrayBuffer(blob);
       } else {
-        lineBuilder.close();
+        self.lineBuilder.close();
       }
     }
     self.read = read;
   }
 
-  FileSource.prototype = new LogSource;
+  FileSource.prototype = new LogSource();
 
   return FileSource;
 });
