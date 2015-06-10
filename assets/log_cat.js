@@ -73,11 +73,13 @@ define(['lib/laconic'], function(el) {
         dom = self.printLog(log);
       }
       dom.appendTo(outputNode);
+      if (self.autoScroll) dom.scrollIntoView(false);
     };
   };
   // Log lines look like this
   // 06-04 09:00:16.261  1409  1409 D OpenGLRenderer: TextureCache::get:
   LogCat.prototype.PATTERN_LOG = /(.{18})\s*(\S+)\s*(\S+) (.) (\S*)\s*: (.*)/;
   LogCat.prototype.PATTERN_TS = /(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2}).(\d{3})/;
+  LogCat.prototype.autoScroll = true;
   return LogCat;
 });

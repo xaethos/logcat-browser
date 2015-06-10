@@ -5,6 +5,7 @@ div.log {
 
 div.raw {
     border-left: red 4px solid;
+    padding-left: 4px;
 }
 
 div.warn {
